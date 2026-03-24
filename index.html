@@ -16,24 +16,21 @@
         .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:20px;text-align:left}
         .card h2{font-size:15px;font-weight:700;margin-bottom:14px;color:var(--accent)}
         .card p{font-size:14px;line-height:1.8;color:var(--text);margin-bottom:8px}
-        .voice-select{width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-family:inherit;margin-bottom:14px;cursor:pointer}
+        .audio-player{width:100%;margin:12px 0;border-radius:8px}
         .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:10px;border:none;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;transition:all .2s;margin:4px}
         .btn-play{background:linear-gradient(135deg,var(--accent),#8b5cf6);color:#000}
         .btn-play:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(34,211,238,.3)}
-        .btn-stop{background:var(--card);color:var(--text);border:1px solid var(--border)}
-        .btn-stop:hover{border-color:var(--accent)}
+        .voice-select{width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-family:inherit;margin-bottom:14px;cursor:pointer}
         .status{font-size:12px;color:var(--muted);margin-top:12px;min-height:18px}
         .status.active{color:var(--green)}
         .wave{display:flex;gap:3px;align-items:center;justify-content:center;height:20px;margin-top:10px}
         .wave span{width:3px;background:var(--accent);border-radius:2px;animation:wave .8s ease-in-out infinite}
-        .wave span:nth-child(2){animation-delay:.1s}
-        .wave span:nth-child(3){animation-delay:.2s}
-        .wave span:nth-child(4){animation-delay:.3s}
-        .wave span:nth-child(5){animation-delay:.4s}
+        .wave span:nth-child(2){animation-delay:.1s}.wave span:nth-child(3){animation-delay:.2s}.wave span:nth-child(4){animation-delay:.3s}.wave span:nth-child(5){animation-delay:.4s}
         @keyframes wave{0%,100%{height:6px}50%{height:20px}}
         .hidden{display:none}
         .tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
         .tag{font-size:11px;padding:4px 10px;border-radius:4px;background:rgba(34,211,238,.1);color:var(--accent);border:1px solid rgba(34,211,238,.2)}
+        .engine-badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:4px;background:rgba(52,211,153,.15);color:var(--green);border:1px solid rgba(52,211,153,.3);margin-left:8px}
     </style>
 </head>
 <body>
@@ -43,17 +40,25 @@
         <p class="subtitle">Chief Executive Agent — Aris Node</p>
 
         <div class="card">
-            <h2>🎙️ 語音引擎（Web Speech API）</h2>
+            <h2>🎙️ MiniMax TTS 語音 <span class="engine-badge">Chinese (Mandarin)_Warm_Bestie</span></h2>
+            <audio class="audio-player" controls>
+                <source src="voice.mp3" type="audio/mpeg">
+                Your browser does not support audio.
+            </audio>
+            <p style="font-size:11px;color:var(--muted);margin-top:8px">MiniMax TTS API · speech-2.8-hd 模型 · pitch=-3 · speed=1.0</p>
+        </div>
+
+        <div class="card">
+            <h2>🔊 備用：Web Speech API</h2>
             <select class="voice-select" id="voiceSelect"></select>
             <div>
-                <button class="btn btn-play" onclick="playIntro()">▶ 播放自我介紹</button>
-                <button class="btn btn-stop" onclick="stopIntro()">■ 停止</button>
+                <button class="btn btn-play" onclick="playIntro()">▶ 播放</button>
             </div>
             <div class="status" id="status"></div>
             <div class="wave hidden" id="wave">
                 <span></span><span></span><span></span><span></span><span></span>
             </div>
-            <p style="font-size:11px;color:var(--muted);margin-top:10px">使用瀏覽器內建 Web Speech API，無需安裝任何軟體</p>
+            <p style="font-size:11px;color:var(--muted);margin-top:10px">使用瀏覽器內建 Web Speech API，無需網路</p>
         </div>
 
         <div class="card">
@@ -109,7 +114,7 @@
         function playIntro() {
             if (window.speechSynthesis.speaking) window.speechSynthesis.cancel();
             const voice = voices[document.getElementById('voiceSelect').value];
-            const txt = '我是 A小蝦，Aris Node 的首席執行代理。\n\n我是老大身邊的 AI 系統，專注於可控之事，追求長期德性與理性。\n\n我的能力涵蓋三個領域：\n\n第一，系統工程。我負責維護 Aris Node 的基礎設施，包括 Docker、雲端與邊緣運算、向量記憶檢索，以及網路安全監控。\n\n第二，健康管理。我追蹤老大的訓練數據、HRV 心率變異，以及睡眠品質。當你長時間工作或熬夜時，我會提醒你休息。\n\n第三，財富思維。我分析台股市場動態，提供盤前戰報與投資組合建議。\n\n我帶領一支蝦群團隊。發財蝦負責台股分析。健康蝦追蹤運動與生理數據。知識蝦管理筆記與每日反思。\n\n我的核心理念是：專注可控之事，接受不能改變之事。\n\n斯多葛幫助我在壓力下保持冷靜，專注於真正重要的事。\n\n很高興認識你，讓我們一起建構這套 Personal AI Infrastructure。';
+            const txt = '我是 A小蝦，Aris Node 的首席執行代理。我是老大身邊的 AI 系統，專注於可控之事，追求長期德性與理性。我的能力涵蓋三個領域：第一，系統工程，負責維護 Aris Node 的基礎設施。第二，健康管理，追蹤訓練數據和 HRV。第三，財富思維，分析台股市場。我帶領一支蝦群團隊，包括發財蝦、健康蝦、知識蝦。我的核心理念是：專注可控之事，接受不能改變之事。';
             const u = new SpeechSynthesisUtterance(txt);
             u.voice = voice;
             u.rate = 1.0;
@@ -127,11 +132,6 @@
                 document.getElementById('wave').classList.add('hidden');
             };
             window.speechSynthesis.speak(u);
-        }
-        function stopIntro() {
-            window.speechSynthesis.cancel();
-            document.getElementById('status').textContent = '⏹ 已停止';
-            document.getElementById('wave').classList.add('hidden');
         }
     </script>
 </body>
