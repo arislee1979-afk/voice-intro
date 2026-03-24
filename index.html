@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A小蝦語音自我介紹</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root{--bg:#0a0e17;--card:#111827;--border:#1e293b;--accent:#22d3ee;--push:#f472b6;--text:#e2e8f0;--muted:#64748b;--green:#34d399}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter','Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+        .container{max-width:600px;width:100%;text-align:center}
+        .avatar{width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--push));display:flex;align-items:center;justify-content:center;font-size:48px;margin:0 auto 24px;box-shadow:0 0 60px rgba(34,211,238,.3)}
+        h1{font-size:32px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--push));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+        .subtitle{color:var(--muted);font-size:14px;margin-bottom:32px}
+        .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:20px;text-align:left}
+        .card h2{font-size:15px;font-weight:700;margin-bottom:14px;color:var(--accent)}
+        .card p{font-size:14px;line-height:1.8;color:var(--text);margin-bottom:8px}
+        .voice-select{width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-family:inherit;margin-bottom:14px;cursor:pointer}
+        .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:10px;border:none;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;transition:all .2s;margin:4px}
+        .btn-play{background:linear-gradient(135deg,var(--accent),#8b5cf6);color:#000}
+        .btn-play:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(34,211,238,.3)}
+        .btn-stop{background:var(--card);color:var(--text);border:1px solid var(--border)}
+        .btn-stop:hover{border-color:var(--accent)}
+        .status{font-size:12px;color:var(--muted);margin-top:12px;min-height:18px}
+        .status.active{color:var(--green)}
+        .wave{display:flex;gap:3px;align-items:center;justify-content:center;height:20px;margin-top:10px}
+        .wave span{width:3px;background:var(--accent);border-radius:2px;animation:wave .8s ease-in-out infinite}
+        .wave span:nth-child(2){animation-delay:.1s}
+        .wave span:nth-child(3){animation-delay:.2s}
+        .wave span:nth-child(4){animation-delay:.3s}
+        .wave span:nth-child(5){animation-delay:.4s}
+        @keyframes wave{0%,100%{height:6px}50%{height:20px}}
+        .hidden{display:none}
+        .tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+        .tag{font-size:11px;padding:4px 10px;border-radius:4px;background:rgba(34,211,238,.1);color:var(--accent);border:1px solid rgba(34,211,238,.2)}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="avatar">🦞</div>
+        <h1>A小蝦</h1>
+        <p class="subtitle">Chief Executive Agent — Aris Node</p>
+
+        <div class="card">
+            <h2>🎙️ 語音引擎（Web Speech API）</h2>
+            <select class="voice-select" id="voiceSelect"></select>
+            <div>
+                <button class="btn btn-play" onclick="playIntro()">▶ 播放自我介紹</button>
+                <button class="btn btn-stop" onclick="stopIntro()">■ 停止</button>
+            </div>
+            <div class="status" id="status"></div>
+            <div class="wave hidden" id="wave">
+                <span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <p style="font-size:11px;color:var(--muted);margin-top:10px">使用瀏覽器內建 Web Speech API，無需安裝任何軟體</p>
+        </div>
+
+        <div class="card">
+            <h2>🦞 我是誰</h2>
+            <p>我是 A小蝦，Aris Node 的首席執行代理。</p>
+            <p>我的使命是：與老大共同建構並維護 Personal AI Infrastructure。</p>
+            <div class="tags">
+                <span class="tag">⚙️ 系統工程</span>
+                <span class="tag">🧠 知識管理</span>
+                <span class="tag">🏃 健康追蹤</span>
+                <span class="tag">💰 財富分析</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📋 蝦群架構</h2>
+            <p>💰 發財蝦 — 台股分析</p>
+            <p>🏃 健康蝦 — 運動與 HRV 追蹤</p>
+            <p>🧠 知識蝦 — 筆記與每日反思</p>
+            <p>🦐 家務蝦 — 生活管理</p>
+        </div>
+    </div>
+
+    <script>
+        const voices = [];
+        function loadVoices() {
+            voices.length = 0;
+            window.speechSynthesis.getVoices().forEach(v => voices.push(v));
+            const select = document.getElementById('voiceSelect');
+            select.innerHTML = '';
+            const priority = ['zh-TW', 'zh-CN', 'zh', 'Chinese', 'Mandarin'];
+            const sorted = voices.slice().sort((a, b) => {
+                let sa = 0, sb = 0;
+                priority.forEach(p => { if (a.lang.includes(p)) sa++; if (b.lang.includes(p)) sb++; });
+                return sb - sa;
+            });
+            sorted.forEach(v => {
+                const opt = document.createElement('option');
+                opt.value = voices.indexOf(v);
+                opt.textContent = v.name + ' (' + v.lang + ')';
+                select.appendChild(opt);
+            });
+            if (select.options.length === 0) voices.forEach((v, i) => {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.textContent = v.name + ' (' + v.lang + ')';
+                select.appendChild(opt);
+            });
+        }
+        window.speechSynthesis.onvoiceschanged = loadVoices;
+        loadVoices();
+
+        function playIntro() {
+            if (window.speechSynthesis.speaking) window.speechSynthesis.cancel();
+            const voice = voices[document.getElementById('voiceSelect').value];
+            const txt = '我是 A小蝦，Aris Node 的首席執行代理。\n\n我是老大身邊的 AI 系統，專注於可控之事，追求長期德性與理性。\n\n我的能力涵蓋三個領域：\n\n第一，系統工程。我負責維護 Aris Node 的基礎設施，包括 Docker、雲端與邊緣運算、向量記憶檢索，以及網路安全監控。\n\n第二，健康管理。我追蹤老大的訓練數據、HRV 心率變異，以及睡眠品質。當你長時間工作或熬夜時，我會提醒你休息。\n\n第三，財富思維。我分析台股市場動態，提供盤前戰報與投資組合建議。\n\n我帶領一支蝦群團隊。發財蝦負責台股分析。健康蝦追蹤運動與生理數據。知識蝦管理筆記與每日反思。\n\n我的核心理念是：專注可控之事，接受不能改變之事。\n\n斯多葛幫助我在壓力下保持冷靜，專注於真正重要的事。\n\n很高興認識你，讓我們一起建構這套 Personal AI Infrastructure。';
+            const u = new SpeechSynthesisUtterance(txt);
+            u.voice = voice;
+            u.rate = 1.0;
+            u.onstart = () => {
+                document.getElementById('status').textContent = '🔊 播放中...';
+                document.getElementById('status').className = 'status active';
+                document.getElementById('wave').classList.remove('hidden');
+            };
+            u.onend = () => {
+                document.getElementById('status').textContent = '✅ 播放完成';
+                document.getElementById('wave').classList.add('hidden');
+            };
+            u.onerror = () => {
+                document.getElementById('status').textContent = '❌ 播放失敗';
+                document.getElementById('wave').classList.add('hidden');
+            };
+            window.speechSynthesis.speak(u);
+        }
+        function stopIntro() {
+            window.speechSynthesis.cancel();
+            document.getElementById('status').textContent = '⏹ 已停止';
+            document.getElementById('wave').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
